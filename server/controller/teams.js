@@ -1,5 +1,6 @@
 import express from "express";
 import db from "../database/connect.js";
+import upload from "../middleware/multer.js";
 // import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -15,6 +16,20 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/teams", upload.single("team_logo"), async (req, res) => {
+  console.log(req.file);
+  if (req.file) {
+    req.body.team_logo = "/uploads/" + req.file.filename;
+  }
+  try {
+    console.log(req.body);
+    new db.Teams(req.body).save();
+    res.send("New team added");
+  } catch {
+    res.status(500).send("Ivyko klaida");
+  }
+});
+
 // router.get("/:id", async (req, res) => {
 //   try {
 //     const book = await db.Books.findByPk(req.params.id);
@@ -23,15 +38,6 @@ router.get("/", async (req, res) => {
 //     res.status(500).send("Ivyko klaida");
 //   }
 // });
-
-router.post("/teams", async (req, res) => {
-  try {
-    new db.Teams(req.body).save();
-    res.send("New team added");
-  } catch {
-    res.status(500).send("Ivyko klaida");
-  }
-});
 
 // router.put("/edit/:id", auth, async (req, res) => {
 //   try {

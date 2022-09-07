@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import Teams from "../model/teams.js";
 import Games from "../model/games.js";
+import LiveScore from "../model/liveScore.js";
 import mysql from "mysql2/promise";
 
 const database = {};
@@ -37,6 +38,13 @@ try {
   // Create table // per egza keiciam tik sita
   database.Teams = Teams(sequelize);
   database.Games = Games(sequelize);
+  database.LiveScore = LiveScore(sequelize);
+
+  database.Games.hasMany(database.Games, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  }); // reliacija, svarbu, kad eilute butu virs synco.
+  database.Games.belongsTo(database.LiveScore);
 
   await sequelize.sync({ alter: true });
 } catch {

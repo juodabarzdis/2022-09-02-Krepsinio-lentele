@@ -1,0 +1,17 @@
+.nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  width: 100%;
+  background-color: #003049;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}

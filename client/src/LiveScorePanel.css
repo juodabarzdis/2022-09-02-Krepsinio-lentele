@@ -1,0 +1,39 @@
+.attack-row {
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.container {
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
+
+.all-games {
+  width: 1200px;
+  min-height: 300px;
+}
+
+.all-games table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px;
+}
+
+.all-games tr {
+  padding: 10px 0;
+}
+
+.live-score-form {
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
