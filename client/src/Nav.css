@@ -1,7 +1,7 @@
 .nav {
   display: flex;
   flex-direction: row;
-  justify-content: right;
+  justify-content: space-between;
   align-items: center;
   padding: 0 20px;
   height: 60px;
@@ -14,4 +14,12 @@
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
+}
+
+.nav-right {
+  margin-right: 2rem;
+}
+
+.nav-left {
+  margin-left: 2rem;
 }

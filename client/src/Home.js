@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Axios from "axios";
 import Modal from "./components/Modal";
 import convertDate from "./utils/Date";
-import Nav from "./Nav";
 
 function Home() {
   const [teams, setTeams] = useState([]);
@@ -69,7 +68,6 @@ function Home() {
 
   return (
     <div className="App">
-      <Nav />
       {showModal && (
         <Modal
           showModal={showModal}

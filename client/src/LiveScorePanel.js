@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useParams } from "react";
 import Axios from "axios";
 import "./LiveScorePanel.css";
+import convertDate from "./utils/Date";
 
 const LiveScorePanel = () => {
   const [scores, setScores] = useState([]);
   const [games, setGames] = useState([]);
   const [formData, setFormData] = useState({
-    team_one_score: 0,
-    team_two_score: 0,
+    attacking_team_name: "",
+    attack_score: "",
   });
   const [game, setGame] = useState({
     id: 0,
@@ -23,13 +24,11 @@ const LiveScorePanel = () => {
       [e.target.name]: e.target.value,
     });
   };
-  console.log(formData);
 
   useEffect(() => {
     Axios.get("http://localhost:3000/api/livescore/")
       .then((res) => {
         setScores(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -40,7 +39,6 @@ const LiveScorePanel = () => {
     Axios.get("http://localhost:3000/api/games/")
       .then((res) => {
         setGames(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -49,7 +47,7 @@ const LiveScorePanel = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.put("http://localhost:3000/api/games/" + game.id, formData)
+    Axios.post("http://localhost:3000/api/livescore/", formData)
       .then((res) => {
         console.log(res.data);
       })
@@ -57,6 +55,17 @@ const LiveScorePanel = () => {
         console.log(err);
       });
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   Axios.put("http://localhost:3000/api/games/" + game.id, formData)
+  //     .then((res) => {
+  //       // console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   const onClick = (e) => {
     setGame({
@@ -70,7 +79,7 @@ const LiveScorePanel = () => {
     <div className="container">
       <div className="all-games">
         <h1>All Games</h1>
-        <table>
+        <table className="table">
           <thead>
             <tr>
               <th>Game Date</th>
@@ -97,7 +106,7 @@ const LiveScorePanel = () => {
                     )
                   }
                 >
-                  <td>{game.game_date}</td>
+                  <td>{convertDate(game.game_date)}</td>
                   <td>{game.team_one_name}</td>
                   <td>{game.team_two_name}</td>
                   <td>{game.team_one_score}</td>
@@ -112,39 +121,54 @@ const LiveScorePanel = () => {
       <div>
         <h1>Live Score Panel</h1>
       </div>
+      {game.id !== 0 ? (
+        <div className="live-score">
+          <form className="live-score-form" action="" onSubmit={handleSubmit}>
+            <div>
+              <input
+                className="radio-input"
+                id="team-one"
+                type="radio"
+                name="attacking_team_name"
+                value={game.team_one_name}
+                onChange={(e) => {
+                  handleForm(e);
+                }}
+              />
+              <label htmlFor="team-one" value={game.team_one_name}>
+                {game.team_one_name}
+              </label>
+              <input
+                className="radio-input"
+                id="team-two"
+                type="radio"
+                name="attacking_team_name"
+                value={game.team_two_name}
+                onChange={(e) => {
+                  handleForm(e);
+                }}
+              />
+              <label htmlFor="team-two" value={game.team_two_name}>
+                {game.team_two_name}
+              </label>
+            </div>
+            <div>
+              <input
+                className="text-input"
+                type="number"
+                name="attack_score"
+                onChange={(e) => {
+                  handleForm(e);
+                }}
+              />
+              <button>Submit</button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <h2>Select game to start managing livescore</h2>
+      )}
 
-      <div className="live-score">
-        <form className="live-score-form" action="" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="team-one" value={game.team_one_name}>
-              {game.team_one_name}
-            </label>
-            <input type="checkbox" name="team_one_name" />
-            <label htmlFor="team-two" value={game.team_two_name}>
-              {game.team_two_name}
-            </label>
-            <input type="checkbox" name="team_two_name" value="team_two_name" />
-          </div>
-          <div>
-            <input
-              type="number"
-              name="team_one_score"
-              onChange={(e) => {
-                handleForm(e);
-              }}
-            />
-
-            <input
-              type="number"
-              name="team_two_score"
-              onChange={(e) => {
-                handleForm(e);
-              }}
-            />
-          </div>
-          <button>Submit</button>
-        </form>
-      </div>
       {/* <div className="score-input">
         <div>
           <form onSubmit={handleSubmit}>
@@ -164,23 +188,24 @@ const LiveScorePanel = () => {
           </form>
         </div>
       </div> */}
-
+      {/* 
       <div>
-        <div className="live-card">
-          {scores &&
-            scores.map((score) => {
-              return (
-                <div className="attack-row" key={score.id}>
-                  <div>
-                    <h2>{score.attacking_team_name}</h2>
-                  </div>
-                  <div>
-                    <h3>{score.attack_score}</h3>
-                  </div>
+
+      </div> */}
+      <div className="live-card">
+        {scores &&
+          scores.map((score) => {
+            return (
+              <div className="attack-row" key={score.id}>
+                <div>
+                  <h2>{score.attacking_team_name}</h2>
                 </div>
-              );
-            })}
-        </div>
+                <div>
+                  <h3>{score.attack_score}</h3>
+                </div>
+              </div>
+            );
+          })}
       </div>
     </div>
   );

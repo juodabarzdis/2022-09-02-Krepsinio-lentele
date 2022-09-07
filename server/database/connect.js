@@ -40,11 +40,9 @@ try {
   database.Games = Games(sequelize);
   database.LiveScore = LiveScore(sequelize);
 
-  database.Games.hasMany(database.Games, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  }); // reliacija, svarbu, kad eilute butu virs synco.
-  database.Games.belongsTo(database.LiveScore);
+  database.Games.hasMany(database.LiveScore);
+
+  // database.Games.belongsTo(database.LiveScore);
 
   await sequelize.sync({ alter: true });
 } catch {

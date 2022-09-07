@@ -4,7 +4,14 @@ import "./Nav.css";
 const Nav = () => {
   return (
     <div className="nav">
-      <Link to="/scorepanel">Score Panel</Link>
+      <div className="nav-left">
+        <Link to="/" className="nav-left link-logo">
+          Home
+        </Link>
+      </div>
+      <div className="nav-right">
+        <Link to="/scorepanel">Score Panel</Link>
+      </div>
     </div>
   );
 };
