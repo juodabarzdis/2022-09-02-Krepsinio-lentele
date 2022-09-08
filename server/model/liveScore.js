@@ -8,6 +8,9 @@ const LiveScore = (sequelize) => {
     attack_score: {
       type: DataTypes.INTEGER,
     },
+    attack_time: {
+      type: DataTypes.STRING,
+    },
   };
   return sequelize.define("LiveScore", Schema);
 };

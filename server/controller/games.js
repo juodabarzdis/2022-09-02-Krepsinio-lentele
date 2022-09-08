@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const game = await db.Games.findByPk(req.params.id);
-    game.update(req.body);
+    await game.update(req.body);
     res.send("Game updated");
   } catch {
     res.status(500).send("Ivyko klaida");

@@ -3,22 +3,22 @@ import { DataTypes } from "sequelize";
 const Games = (sequelize) => {
   const Schema = {
     team_one_name: {
-      type: DataTypes.STRING, //=VARCHAR(255)
+      type: DataTypes.STRING,
     },
     team_two_name: {
-      type: DataTypes.STRING, //=VARCHAR(255)
+      type: DataTypes.STRING,
     },
     team_one_score: {
-      type: DataTypes.INTEGER, //=VARCHAR(255)
+      type: DataTypes.INTEGER,
     },
     team_two_score: {
-      type: DataTypes.INTEGER, //=VARCHAR(255)
+      type: DataTypes.INTEGER,
     },
     tournament: {
-      type: DataTypes.STRING, //=VARCHAR(255)
+      type: DataTypes.STRING,
     },
     game_date: {
-      type: DataTypes.DATE, //=VARCHAR(255)
+      type: DataTypes.DATE,
     },
   };
   return sequelize.define("Games", Schema);

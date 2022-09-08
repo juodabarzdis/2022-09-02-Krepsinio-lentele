@@ -41,8 +41,7 @@ try {
   database.LiveScore = LiveScore(sequelize);
 
   database.Games.hasMany(database.LiveScore);
-
-  // database.Games.belongsTo(database.LiveScore);
+  database.LiveScore.belongsTo(database.Games);
 
   await sequelize.sync({ alter: true });
 } catch {

@@ -6,9 +6,16 @@ import convertDate from "./utils/Date";
 const LiveScorePanel = () => {
   const [scores, setScores] = useState([]);
   const [games, setGames] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [sum, setSum] = useState({
+    sum1: 0,
+    sum2: 0,
+  });
   const [formData, setFormData] = useState({
+    GameId: 0,
     attacking_team_name: "",
     attack_score: "",
+    attack_time: "",
   });
   const [game, setGame] = useState({
     id: 0,
@@ -21,19 +28,27 @@ const LiveScorePanel = () => {
   const handleForm = (e) => {
     setFormData({
       ...formData,
+      GameId: game.id,
       [e.target.name]: e.target.value,
     });
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:3000/api/livescore/")
-      .then((res) => {
-        setScores(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    game.id !== 0 &&
+      Axios.get("http://localhost:3000/api/livescore/" + game.id)
+        .then((res) => {
+          setScores(res.data.games);
+          setSum({
+            sum1: res.data.sum1,
+            sum2: res.data.sum2,
+          });
+
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [refresh, game]);
 
   useEffect(() => {
     Axios.get("http://localhost:3000/api/games/")
@@ -43,38 +58,17 @@ const LiveScorePanel = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [sum, refresh]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     Axios.post("http://localhost:3000/api/livescore/", formData)
-      .then((res) => {
-        console.log(res.data);
-      })
+      .then((resp) => setRefresh(!refresh))
       .catch((err) => {
         console.log(err);
       });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   Axios.put("http://localhost:3000/api/games/" + game.id, formData)
-  //     .then((res) => {
-  //       // console.log(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  const onClick = (e) => {
-    setGame({
-      ...game,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  console.log(formData);
   return (
     <div className="container">
       <div className="all-games">
@@ -94,17 +88,16 @@ const LiveScorePanel = () => {
               return (
                 <tr
                   key={game.id}
-                  onClick={(e) =>
-                    onClick(
-                      setGame({
-                        id: game.id,
-                        team_one_name: game.team_one_name,
-                        team_two_name: game.team_two_name,
-                        team_one_score: game.team_one_score,
-                        team_two_score: game.team_two_score,
-                      })
-                    )
-                  }
+                  onClick={(e) => {
+                    setGame({
+                      id: game.id,
+                      team_one_name: game.team_one_name,
+                      team_two_name: game.team_two_name,
+                      team_one_score: game.team_one_score,
+                      team_two_score: game.team_two_score,
+                    });
+                    setRefresh(!refresh);
+                  }}
                 >
                   <td>{convertDate(game.game_date)}</td>
                   <td>{game.team_one_name}</td>
@@ -118,95 +111,140 @@ const LiveScorePanel = () => {
         </table>
       </div>
 
-      <div>
-        <h1>Live Score Panel</h1>
-      </div>
-      {game.id !== 0 ? (
-        <div className="live-score">
-          <form className="live-score-form" action="" onSubmit={handleSubmit}>
-            <div>
-              <input
-                className="radio-input"
-                id="team-one"
-                type="radio"
-                name="attacking_team_name"
-                value={game.team_one_name}
-                onChange={(e) => {
-                  handleForm(e);
-                }}
-              />
-              <label htmlFor="team-one" value={game.team_one_name}>
-                {game.team_one_name}
-              </label>
-              <input
-                className="radio-input"
-                id="team-two"
-                type="radio"
-                name="attacking_team_name"
-                value={game.team_two_name}
-                onChange={(e) => {
-                  handleForm(e);
-                }}
-              />
-              <label htmlFor="team-two" value={game.team_two_name}>
-                {game.team_two_name}
-              </label>
-            </div>
-            <div>
-              <input
-                className="text-input"
-                type="number"
-                name="attack_score"
-                onChange={(e) => {
-                  handleForm(e);
-                }}
-              />
-              <button>Submit</button>
-            </div>
-          </form>
+      <section className="score-control">
+        <div className="section-title">
+          <h1>Live Score Panel</h1>
         </div>
-      ) : (
-        <h2>Select game to start managing livescore</h2>
-      )}
 
-      {/* <div className="score-input">
-        <div>
-          <form onSubmit={handleSubmit}>
-            <input
-              onChange={(e) => handleForm(e)}
-              name="attacking_team_name"
-              type="text"
-              placeholder="Team Name"
-            />
-            <input
-              onChange={(e) => handleForm(e)}
-              name="attack_score"
-              type="number"
-              placeholder="Attack score"
-            />
-            <button>Submit</button>
-          </form>
-        </div>
-      </div> */}
-      {/* 
-      <div>
+        <div className="live-wrapper">
+          <div className="live-left">
+            {game.id !== 0 ? (
+              <div className="live-score">
+                <div className="live-total-score">
+                  {/* <div>{game.team_one_score}</div>
+            <div>{game.team_two_score}</div> */}
+                  <div>{sum.sum1}</div>
+                  <div>{sum.sum2}</div>
+                </div>
 
-      </div> */}
-      <div className="live-card">
-        {scores &&
-          scores.map((score) => {
-            return (
-              <div className="attack-row" key={score.id}>
-                <div>
-                  <h2>{score.attacking_team_name}</h2>
-                </div>
-                <div>
-                  <h3>{score.attack_score}</h3>
-                </div>
+                <form
+                  className="live-score-form"
+                  action=""
+                  onSubmit={(e) => {
+                    handleSubmit(e);
+                  }}
+                >
+                  <div>
+                    <input
+                      className="radio-input"
+                      id="team-one"
+                      type="radio"
+                      name="attacking_team_name"
+                      value={game.team_one_name}
+                      onChange={(e) => {
+                        handleForm(e);
+                      }}
+                    />
+                    <label htmlFor="team-one" value={game.team_one_name}>
+                      {game.team_one_name}
+                    </label>
+                    <input
+                      className="radio-input"
+                      id="team-two"
+                      type="radio"
+                      name="attacking_team_name"
+                      value={game.team_two_name}
+                      onChange={(e) => {
+                        handleForm(e);
+                      }}
+                    />
+                    <label htmlFor="team-two" value={game.team_two_name}>
+                      {game.team_two_name}
+                    </label>
+                  </div>
+
+                  <div>
+                    <input
+                      type="text"
+                      name="attack_time"
+                      onChange={handleForm}
+                    />
+                  </div>
+
+                  <div>
+                    <input
+                      id="1-point"
+                      className="radio-input"
+                      type="radio"
+                      name="attack_score"
+                      value="1"
+                      onChange={(e) => {
+                        handleForm(e);
+                      }}
+                    />
+                    <label htmlFor="1-point" value="1">
+                      1
+                    </label>
+                    <input
+                      id="2-points"
+                      className="radio-input"
+                      type="radio"
+                      name="attack_score"
+                      value="2"
+                      onChange={(e) => {
+                        handleForm(e);
+                      }}
+                    />{" "}
+                    <label htmlFor="2-points" value="2">
+                      2
+                    </label>
+                    <input
+                      id="3-points"
+                      className="radio-input"
+                      type="radio"
+                      name="attack_score"
+                      value="3"
+                      onChange={(e) => {
+                        handleForm(e);
+                      }}
+                    />
+                    <label htmlFor="3-points" value="3">
+                      3
+                    </label>
+                  </div>
+                  <div>
+                    <button>Submit</button>
+                  </div>
+                </form>
               </div>
-            );
-          })}
-      </div>
+            ) : (
+              <div className="start-game">
+                <h2>Select game to start managing livescore.</h2>
+              </div>
+            )}
+          </div>
+          <div className="live-right">
+            <div className="live-card">
+              {scores &&
+                scores
+                  .slice(0)
+                  .reverse()
+                  .map((score) => {
+                    return (
+                      <div className="attack-row" key={score.id}>
+                        <div>
+                          <h2>
+                            [{score.attack_time}] {score.attacking_team_name} is
+                            attacking and score {score.attack_score} points.
+                          </h2>
+                        </div>
+                      </div>
+                    );
+                  })}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

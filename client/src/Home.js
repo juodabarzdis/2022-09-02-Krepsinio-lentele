@@ -13,6 +13,7 @@ function Home() {
   const [games, setGames] = useState([]);
   const [teamName, setTeamName] = useState("");
   const [gameData, setGameData] = useState([]);
+  const [scores, setScores] = useState([]);
 
   useEffect(() => {
     Axios.get("http://localhost:3000/api/teams/")
@@ -39,7 +40,6 @@ function Home() {
   useEffect(() => {
     Axios.get("http://localhost:3000/api/games/")
       .then((res) => {
-        //console.log(res.data);
         setGames(res.data);
       })
       .catch((err) => {
@@ -65,6 +65,17 @@ function Home() {
     let n = words.replace(/[\[\]?.,\/#!$%\^&\*;:{}=\\|_~()]/g, "").split(" ");
     return n[n.length - 1];
   }
+
+  useEffect(() => {
+    Axios.get("http://localhost:3000/api/livescore/")
+      .then((res) => {
+        setScores(res.data.games);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div className="App">
@@ -115,6 +126,21 @@ function Home() {
             </div>
           );
         })}
+      </div>
+      <div className="live-score-container">
+        <div className="live-score">
+          <h1>Live Score</h1>
+          {scores.map((score) => {
+            return (
+              <div className="score" key={score.id}>
+                <div>
+                  [{score.attack_time}], {score.attacking_team_name},{" "}
+                  {score.attack_score}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
