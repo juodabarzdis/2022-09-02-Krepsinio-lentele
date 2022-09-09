@@ -20,6 +20,10 @@ const Games = (sequelize) => {
     game_date: {
       type: DataTypes.DATE,
     },
+    isLive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: 0,
+    },
   };
   return sequelize.define("Games", Schema);
 };

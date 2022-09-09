@@ -6,13 +6,26 @@ import { Op } from "sequelize";
 const router = express.Router();
 
 // get all posts with validation
+
 router.get("/", async (req, res) => {
   try {
     const games = await db.Games.findAll();
     res.json(games);
   } catch (error) {
     res.status(500).send("Ivyko klaida");
-    //  res.sendStatus(500)
+  }
+});
+
+router.get("/upcoming", async (req, res) => {
+  try {
+    const games = await db.Games.findAll({
+      where: {
+        isLive: 0,
+      },
+    });
+    res.json(games);
+  } catch (error) {
+    res.status(500).send("Ivyko klaida");
   }
 });
 
@@ -40,6 +53,19 @@ router.get("/team/:team", async (req, res) => {
   } catch (error) {
     res.status(500).send("Ivyko klaida");
     //  res.sendStatus(500)
+  }
+});
+
+router.get("/live", async (req, res) => {
+  try {
+    const games = await db.Games.findAll({
+      where: {
+        isLive: 1,
+      },
+    });
+    res.json(games);
+  } catch (error) {
+    res.status(500).send("Ivyko klaida");
   }
 });
 

@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useParams } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Axios from "axios";
 import "./LiveScorePanel.css";
 import convertDate from "./utils/Date";
+import MainContext from "./MainContext";
 
 const LiveScorePanel = () => {
+  const { contextRefresh, setContextRefresh } = useContext(MainContext);
   const [scores, setScores] = useState([]);
   const [games, setGames] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -23,6 +25,7 @@ const LiveScorePanel = () => {
     team_two_name: "",
     team_one_score: 0,
     team_two_score: 0,
+    isLive: 0,
   });
 
   const handleForm = (e) => {
@@ -63,11 +66,16 @@ const LiveScorePanel = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     Axios.post("http://localhost:3000/api/livescore/", formData)
-      .then((resp) => setRefresh(!refresh))
+      .then((res) => {
+        setRefresh(!refresh);
+        setContextRefresh(!contextRefresh);
+      })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  console.log(contextRefresh);
 
   return (
     <div className="container">
@@ -89,12 +97,17 @@ const LiveScorePanel = () => {
                 <tr
                   key={game.id}
                   onClick={(e) => {
+                    Axios.put("http://localhost:3000/api/games/" + game.id, {
+                      isLive: 1,
+                    });
                     setGame({
+                      ...game,
                       id: game.id,
                       team_one_name: game.team_one_name,
                       team_two_name: game.team_two_name,
                       team_one_score: game.team_one_score,
                       team_two_score: game.team_two_score,
+                      isLive: 1,
                     });
                     setRefresh(!refresh);
                   }}
@@ -214,6 +227,23 @@ const LiveScorePanel = () => {
                   </div>
                   <div>
                     <button>Submit</button>
+                    <button
+                      className="finish-btn"
+                      onClick={(e) => {
+                        Axios.put(
+                          "http://localhost:3000/api/games/" + game.id,
+                          {
+                            isLive: 0,
+                          }
+                        );
+                        setGame({
+                          ...game,
+                          isLive: 0,
+                        });
+                      }}
+                    >
+                      Finish Game
+                    </button>
                   </div>
                 </form>
               </div>

@@ -1,10 +1,13 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Axios from "axios";
 import Modal from "./components/Modal";
 import convertDate from "./utils/Date";
+import LiveGif from "./images/live.gif";
+import MainContext from "./MainContext";
 
 function Home() {
+  const { contextRefresh } = useContext(MainContext);
   const [teams, setTeams] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState({
@@ -14,6 +17,7 @@ function Home() {
   const [teamName, setTeamName] = useState("");
   const [gameData, setGameData] = useState([]);
   const [scores, setScores] = useState([]);
+  const [liveGames, setLiveGames] = useState([]);
 
   useEffect(() => {
     Axios.get("http://localhost:3000/api/teams/")
@@ -38,7 +42,7 @@ function Home() {
   }, [showModal]);
 
   useEffect(() => {
-    Axios.get("http://localhost:3000/api/games/")
+    Axios.get("http://localhost:3000/api/games/upcoming")
       .then((res) => {
         setGames(res.data);
       })
@@ -53,7 +57,6 @@ function Home() {
 
     Axios.get("http://localhost:3000/api/games/team/" + teamName)
       .then((res) => {
-        console.log(res.data);
         setGameData(res.data);
       })
       .catch((err) => {
@@ -67,15 +70,30 @@ function Home() {
   }
 
   useEffect(() => {
-    Axios.get("http://localhost:3000/api/livescore/")
-      .then((res) => {
-        setScores(res.data.games);
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    setInterval(() => {
+      Axios.get("http://localhost:3000/api/livescore/")
+        .then((res) => {
+          setScores(res.data.games);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 2000);
+  }, [contextRefresh]);
+
+  useEffect(() => {
+    setInterval(() => {
+      Axios.get("http://localhost:3000/api/games/live")
+        .then((res) => {
+          setLiveGames(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 2000);
+  }, [contextRefresh]);
+
+  console.log(contextRefresh);
 
   return (
     <div className="App">
@@ -113,12 +131,12 @@ function Home() {
           return (
             <div className="game-card" key={game.id}>
               <div className="game-date">{convertDate(game.game_date)}</div>
-              <div className="game-teams">
-                <div className="team-game">
+              <div className="upcoming-games">
+                <div className="game-teams">
                   <h2>{game.team_one_name}</h2>
                   <h3>{game.team_one_score}</h3>
                 </div>
-                <div className="team-game">
+                <div className="game-teams">
                   <h2>{game.team_two_name}</h2>
                   <h3>{game.team_two_score}</h3>
                 </div>
@@ -128,14 +146,46 @@ function Home() {
         })}
       </div>
       <div className="live-score-container">
-        <div className="live-score">
-          <h1>Live Score</h1>
-          {scores.map((score) => {
+        <div className="live-games">
+          {liveGames.map((game) => {
             return (
-              <div className="score" key={score.id}>
-                <div>
-                  [{score.attack_time}], {score.attacking_team_name},{" "}
-                  {score.attack_score}
+              <div className="live-game-card" key={game.id}>
+                <div className="live-game-top">
+                  <div className="game-live-logo">
+                    <img src={LiveGif} alt="" />
+                  </div>
+
+                  <div className="game-teams">
+                    <h2>{game.team_one_name}</h2>
+                    <h3>{game.team_one_score}</h3>
+                  </div>
+                  <div className="game-teams">
+                    <h2>{game.team_two_name}</h2>
+                    <h3>{game.team_two_score}</h3>
+                  </div>
+                </div>
+
+                <div className="live-score">
+                  <div>
+                    <h1>Live Score</h1>
+                  </div>
+
+                  {scores
+                    .slice(0)
+                    .reverse()
+                    .map((score, index) => {
+                      return (
+                        index < 12 &&
+                        game.id === score.GameId && (
+                          <div className="score" key={score.id}>
+                            <div>
+                              [{score.attack_time}], {score.attacking_team_name}
+                              , {score.attack_score}
+                            </div>
+                          </div>
+                        )
+                      );
+                    })}
                 </div>
               </div>
             );

@@ -152,6 +152,14 @@ button:hover {
   color: #003049;
 }
 
+.finish-btn {
+  background-color: #e63946;
+}
+
+.finish-btn:hover {
+  background-color: #f8192c;
+}
+
 .section-title {
   margin: 20px 0;
 }
