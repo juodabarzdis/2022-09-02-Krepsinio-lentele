@@ -33,19 +33,17 @@ h1 {
 
 .teams-container {
   width: 80rem;
-  margin-top: 4rem;
+  margin-top: 1rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
 
 .games-container {
-  width: 100%;
-  margin-top: 4rem;
+  max-width: 80vw;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 h2,
@@ -64,8 +62,13 @@ h3 {
   margin: 0 10px;
 }
 
+.game-teams-modal {
+  flex-direction: row;
+}
+
 .game-card {
   width: 300px;
+  height: 9em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,8 +78,12 @@ h3 {
   margin: 10px;
 }
 
+.ended {
+  background-color: #8bbcff;
+}
+
 .game-date {
-  margin: 20px;
+  margin: 20px 0 5px 0;
   font-weight: 600;
 }
 
@@ -103,26 +110,26 @@ h3 {
   align-items: left;
 }
 
-.live-score {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
 .live-game-card {
   display: flex;
   flex-direction: column;
   margin: 20px;
+  width: 400px;
 }
 
 .live-game-top {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   background-color: #003049;
   color: #ffffff;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+}
+
+.live-score {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .upcoming-games {
@@ -130,4 +137,57 @@ h3 {
   align-items: center;
   justify-content: center;
   margin: 0 10px;
+}
+
+.scroll-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.scroll-btn {
+  height: 9rem;
+  width: 30px;
+  background-color: #edf2f47c;
+}
+
+.live-score-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.slide {
+  height: 300px;
+  width: 100%;
+}
+
+.each-slide {
+  display: flex;
+  width: 100%;
+  height: 400px;
+}
+
+.each-slide > div {
+  width: 75%;
+}
+
+.each-slide > div img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.each-slide p {
+  width: 25%;
+  font-size: 1em;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  background: #adceed;
 }

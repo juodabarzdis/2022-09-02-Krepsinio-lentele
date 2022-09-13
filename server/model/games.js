@@ -21,7 +21,7 @@ const Games = (sequelize) => {
       type: DataTypes.DATE,
     },
     isLive: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
   };

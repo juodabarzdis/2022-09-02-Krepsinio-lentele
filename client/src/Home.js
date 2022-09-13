@@ -1,13 +1,14 @@
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
-import { useEffect, useState, useContext } from "react";
 import Axios from "axios";
 import Modal from "./components/Modal";
 import convertDate from "./utils/Date";
 import LiveGif from "./images/live.gif";
-import MainContext from "./MainContext";
+import { BsArrowRightSquare } from "react-icons/bs";
+import { BsArrowLeftSquare } from "react-icons/bs";
+import Slideshow from "./components/Slideshow";
 
-function Home() {
-  const { contextRefresh } = useContext(MainContext);
+const Home = () => {
   const [teams, setTeams] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState({
@@ -18,6 +19,12 @@ function Home() {
   const [gameData, setGameData] = useState([]);
   const [scores, setScores] = useState([]);
   const [liveGames, setLiveGames] = useState([]);
+  const [endedGames, setEndedGames] = useState([]);
+  const containerRef = useRef(null);
+
+  const scroll = (scrollOffset) => {
+    containerRef.current.scrollLeft += scrollOffset;
+  };
 
   useEffect(() => {
     Axios.get("http://localhost:3000/api/teams/")
@@ -51,6 +58,16 @@ function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    Axios.get("http://localhost:3000/api/games/ended")
+      .then((res) => {
+        setEndedGames(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   // Modal Data
   useEffect(() => {
     if (teamName === "") return;
@@ -65,7 +82,9 @@ function Home() {
   }, [teamName]);
 
   function lastWord(words) {
+    // eslint-disable-next-line
     let n = words.replace(/[\[\]?.,\/#!$%\^&\*;:{}=\\|_~()]/g, "").split(" ");
+
     return n[n.length - 1];
   }
 
@@ -78,8 +97,8 @@ function Home() {
         .catch((err) => {
           console.log(err);
         });
-    }, 2000);
-  }, [contextRefresh]);
+    }, 5000);
+  }, []);
 
   useEffect(() => {
     setInterval(() => {
@@ -91,12 +110,20 @@ function Home() {
           console.log(err);
         });
     }, 2000);
-  }, [contextRefresh]);
+  }, []);
 
-  console.log(contextRefresh);
+  const containerStyles = {
+    width: "100%",
+    height: "480px",
+    margin: "0 auto",
+  };
 
   return (
     <div className="App">
+      <div style={containerStyles}>
+        <Slideshow />
+      </div>
+
       {showModal && (
         <Modal
           showModal={showModal}
@@ -105,6 +132,7 @@ function Home() {
           gameData={gameData}
         />
       )}
+
       <div className="teams-container">
         {teams.map((team) => {
           return (
@@ -126,35 +154,18 @@ function Home() {
           );
         })}
       </div>
-      <div className="games-container">
-        {games.map((game) => {
-          return (
-            <div className="game-card" key={game.id}>
-              <div className="game-date">{convertDate(game.game_date)}</div>
-              <div className="upcoming-games">
-                <div className="game-teams">
-                  <h2>{game.team_one_name}</h2>
-                  <h3>{game.team_one_score}</h3>
-                </div>
-                <div className="game-teams">
-                  <h2>{game.team_two_name}</h2>
-                  <h3>{game.team_two_score}</h3>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="live-score-container">
-        <div className="live-games">
-          {liveGames.map((game) => {
+      <div className="scroll-container">
+        <div>
+          <button className="scroll-btn" onClick={() => scroll(-250)}>
+            <BsArrowLeftSquare />
+          </button>
+        </div>
+        <div className="games-container" ref={containerRef}>
+          {games.map((game) => {
             return (
-              <div className="live-game-card" key={game.id}>
-                <div className="live-game-top">
-                  <div className="game-live-logo">
-                    <img src={LiveGif} alt="" />
-                  </div>
-
+              <div className="game-card" key={game.id}>
+                <div className="game-date">{convertDate(game.game_date)}</div>
+                <div className="upcoming-games">
                   <div className="game-teams">
                     <h2>{game.team_one_name}</h2>
                     <h3>{game.team_one_score}</h3>
@@ -164,36 +175,94 @@ function Home() {
                     <h3>{game.team_two_score}</h3>
                   </div>
                 </div>
+              </div>
+            );
+          })}
+        </div>
+        <div>
+          <button className="scroll-btn" onClick={() => scroll(250)}>
+            <BsArrowRightSquare />
+          </button>
+        </div>
+      </div>
 
-                <div className="live-score">
-                  <div>
-                    <h1>Live Score</h1>
+      <div className="scroll-container finished">
+        {/* <div>
+          <button className="scroll-btn" onClick={() => scroll(-100)}>
+            <BsArrowLeftSquare />
+          </button>
+        </div> */}
+        <div className="games-container">
+          {endedGames.map((game) => {
+            return (
+              <div className="game-card ended" key={game.id}>
+                <div className="game-date">{convertDate(game.game_date)}</div>
+                <div className="upcoming-games">
+                  <div className="game-teams">
+                    <h2>{game.team_one_name}</h2>
+                    <h3>{game.team_one_score}</h3>
                   </div>
-
-                  {scores
-                    .slice(0)
-                    .reverse()
-                    .map((score, index) => {
-                      return (
-                        index < 12 &&
-                        game.id === score.GameId && (
-                          <div className="score" key={score.id}>
-                            <div>
-                              [{score.attack_time}], {score.attacking_team_name}
-                              , {score.attack_score}
-                            </div>
-                          </div>
-                        )
-                      );
-                    })}
+                  <div className="game-teams">
+                    <h2>{game.team_two_name}</h2>
+                    <h3>{game.team_two_score}</h3>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
+        {/* <div>
+          <button className="scroll-btn" onClick={() => scroll(100)}>
+            <BsArrowRightSquare />
+          </button>
+        </div> */}
+      </div>
+
+      <div className="live-score-container">
+        {liveGames.map((game) => {
+          return (
+            <div className="live-game-card" key={game.id}>
+              <div className="live-game-top">
+                <div className="game-live-logo">
+                  <img src={LiveGif} alt="" />
+                </div>
+
+                <div className="game-teams">
+                  <h2>{game.team_one_name}</h2>
+                  <h3>{game.team_one_score}</h3>
+                </div>
+                <div className="game-teams">
+                  <h2>{game.team_two_name}</h2>
+                  <h3>{game.team_two_score}</h3>
+                </div>
+              </div>
+
+              <div className="live-score">
+                <div>
+                  <h1>Live Score</h1>
+                </div>
+
+                {scores
+                  .slice(0)
+                  .reverse()
+                  .map((score, index) => {
+                    return (
+                      index < 10 &&
+                      game.id === score.GameId && (
+                        <div className="score" key={score.id}>
+                          [{score.attack_time}], {score.attacking_team_name},{" "}
+                          {score.attack_score}
+                        </div>
+                      )
+                    );
+                  })}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
-}
+};
 
 export default Home;

@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import "./LiveScorePanel.css";
 import convertDate from "./utils/Date";
-import MainContext from "./MainContext";
+import LiveGif from "./images/live.gif";
 
 const LiveScorePanel = () => {
-  const { contextRefresh, setContextRefresh } = useContext(MainContext);
   const [scores, setScores] = useState([]);
   const [games, setGames] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -68,19 +67,81 @@ const LiveScorePanel = () => {
     Axios.post("http://localhost:3000/api/livescore/", formData)
       .then((res) => {
         setRefresh(!refresh);
-        setContextRefresh(!contextRefresh);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  console.log(contextRefresh);
+  console.log(games);
 
   return (
     <div className="container">
       <div className="all-games">
-        <h1>All Games</h1>
+        <div className="section-title">
+          <h1>All Games</h1>
+        </div>
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Game Date</th>
+              <th>Team One</th>
+              <th>Team Two</th>
+              <th>Team One Score</th>
+              <th>Team Two Score</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {games.map((game) => {
+              if (game.isLive !== 3) {
+                return (
+                  <tr key={game.id}>
+                    <td>{convertDate(game.game_date)}</td>
+                    <td>{game.team_one_name}</td>
+                    <td>{game.team_two_name}</td>
+                    <td>{game.team_one_score}</td>
+                    <td>{game.team_two_score}</td>
+
+                    <td>
+                      <button
+                        className={game.isLive === 1 ? "live-btn" : ""}
+                        onClick={(e) => {
+                          Axios.put(
+                            "http://localhost:3000/api/games/" + game.id,
+                            {
+                              isLive: 1,
+                            }
+                          );
+                          setGame({
+                            ...game,
+                            id: game.id,
+                            team_one_name: game.team_one_name,
+                            team_two_name: game.team_two_name,
+                            team_one_score: game.team_one_score,
+                            team_two_score: game.team_two_score,
+                            isLive: 1,
+                          });
+                          setRefresh(!refresh);
+                        }}
+                      >
+                        {game.isLive === 1 ? "Game is live" : "Start Game"}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              }
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="all-games finished-games">
+        <div className="section-title">
+          <h1>Finished Games</h1>
+        </div>
+
         <table className="table">
           <thead>
             <tr>
@@ -93,38 +154,23 @@ const LiveScorePanel = () => {
           </thead>
           <tbody>
             {games.map((game) => {
-              return (
-                <tr
-                  key={game.id}
-                  onClick={(e) => {
-                    Axios.put("http://localhost:3000/api/games/" + game.id, {
-                      isLive: 1,
-                    });
-                    setGame({
-                      ...game,
-                      id: game.id,
-                      team_one_name: game.team_one_name,
-                      team_two_name: game.team_two_name,
-                      team_one_score: game.team_one_score,
-                      team_two_score: game.team_two_score,
-                      isLive: 1,
-                    });
-                    setRefresh(!refresh);
-                  }}
-                >
-                  <td>{convertDate(game.game_date)}</td>
-                  <td>{game.team_one_name}</td>
-                  <td>{game.team_two_name}</td>
-                  <td>{game.team_one_score}</td>
-                  <td>{game.team_two_score}</td>
-                </tr>
-              );
+              if (game.isLive === 3) {
+                return (
+                  <tr key={game.id}>
+                    <td>{convertDate(game.game_date)}</td>
+                    <td>{game.team_one_name}</td>
+                    <td>{game.team_two_name}</td>
+                    <td>{game.team_one_score}</td>
+                    <td>{game.team_two_score}</td>
+                  </tr>
+                );
+              }
             })}
           </tbody>
         </table>
       </div>
 
-      <section className="score-control">
+      <section className="all-games score-control">
         <div className="section-title">
           <h1>Live Score Panel</h1>
         </div>
@@ -134,8 +180,6 @@ const LiveScorePanel = () => {
             {game.id !== 0 ? (
               <div className="live-score">
                 <div className="live-total-score">
-                  {/* <div>{game.team_one_score}</div>
-            <div>{game.team_two_score}</div> */}
                   <div>{sum.sum1}</div>
                   <div>{sum.sum2}</div>
                 </div>
@@ -233,12 +277,12 @@ const LiveScorePanel = () => {
                         Axios.put(
                           "http://localhost:3000/api/games/" + game.id,
                           {
-                            isLive: 0,
+                            isLive: 3,
                           }
                         );
                         setGame({
                           ...game,
-                          isLive: 0,
+                          isLive: 3,
                         });
                       }}
                     >

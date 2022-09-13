@@ -3,7 +3,7 @@ import "./Modal.css";
 import convertDate from "../utils/Date";
 
 const Modal = ({ showModal, setShowModal, data, gameData }) => {
-  const modalRef = useRef();
+  const modalRef = useRef(null);
 
   const closeModal = (e) => {
     if (modalRef.current === e.target) {
@@ -31,11 +31,11 @@ const Modal = ({ showModal, setShowModal, data, gameData }) => {
               <div className="modal-content">
                 {gameData.map((game) => {
                   return (
-                    <div className="game-card" key={game.id}>
+                    <div className="game-card " key={game.id}>
                       <div className="game-date">
                         {convertDate(game.game_date)}
                       </div>
-                      <div className="game-teams">
+                      <div className="game-teams game-teams-modal">
                         <div className="team-game">
                           <h2>{game.team_one_name}</h2>
                           <h3>{game.team_one_score}</h3>

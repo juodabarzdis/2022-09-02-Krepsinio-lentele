@@ -3,9 +3,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
   height: 60px;
-  width: 100%;
+  width: 99.1vw;
   background-color: #003049;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
@@ -17,9 +16,9 @@
 }
 
 .nav-right {
-  margin-right: 2rem;
+  padding-right: 2rem;
 }
 
 .nav-left {
-  margin-left: 2rem;
+  padding-left: 2rem;
 }

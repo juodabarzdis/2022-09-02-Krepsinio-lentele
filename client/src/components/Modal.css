@@ -15,10 +15,6 @@
   transition: all 1s;
 }
 
-.modal-overlay {
-  position: absolute;
-}
-
 .modal {
   border: #cbcbcb solid 1px;
   display: flex;

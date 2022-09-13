@@ -1,10 +1,10 @@
 .live-score {
-  width: 600px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 14px;
   background-color: #e5e5e5;
   border-radius: 10px;
   padding: 20px;
@@ -20,6 +20,7 @@
 }
 
 .live-right {
+  margin-left: 30px;
   max-height: 300px;
   overflow: auto;
 }
@@ -49,10 +50,10 @@
 }
 
 .attack-row {
-  width: 600px;
+  max-width: 500px;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
 }
 
 .container {
@@ -61,7 +62,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .all-games {
@@ -73,7 +74,7 @@
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0 10px;
-  margin: 20px;
+
   text-align: center;
 }
 
@@ -86,10 +87,6 @@ td {
   padding: 8px;
 }
 
-.all-games tr {
-  cursor: pointer;
-}
-
 .all-games tr:hover {
   background-color: #e5e5e5;
 }
@@ -100,7 +97,7 @@ td {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .text-input {
@@ -139,17 +136,21 @@ input[type="radio"]:focus + label {
 }
 
 button {
-  width: 200px;
-  height: 40px;
+  width: 150px;
+  height: 30px;
   border: none;
   background-color: #4c4;
   cursor: pointer;
-  margin: 10px;
   border-radius: 10px;
 }
 button:hover {
-  background-color: #bfb;
-  color: #003049;
+  background-color: #003049;
+  color: #ffffff;
+}
+
+.live-btn {
+  background-color: #000;
+  color: #fff;
 }
 
 .finish-btn {
@@ -160,10 +161,17 @@ button:hover {
   background-color: #f8192c;
 }
 
-.section-title {
-  margin: 20px 0;
-}
-
 input[type="text"] {
   height: 30px;
+}
+
+.section-title {
+  margin: 20px 0;
+  background-color: #003049;
+}
+
+.section-title h1 {
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 10px;
 }

@@ -29,6 +29,19 @@ router.get("/upcoming", async (req, res) => {
   }
 });
 
+router.get("/ended", async (req, res) => {
+  try {
+    const games = await db.Games.findAll({
+      where: {
+        isLive: 3,
+      },
+    });
+    res.json(games);
+  } catch (error) {
+    res.status(500).send("Ivyko klaida");
+  }
+});
+
 router.get("/team/:team", async (req, res) => {
   console.log(req);
   try {
