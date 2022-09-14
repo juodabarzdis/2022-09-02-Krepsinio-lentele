@@ -11,3 +11,5 @@ Admin panel:
 Main window:
 
 - User can see basketball teams, upcoming matches, finished matches and live games.
+
+Node.js and SQL server required for running (React) npm install and then starting the app.
